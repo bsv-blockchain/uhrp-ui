@@ -8,9 +8,9 @@ import {
 } from '@mui/material'
 import { CloudDownload } from '@mui/icons-material'
 import { toast } from 'react-toastify'
-import { StorageDownloader } from '@bsv/sdk'
+import { StorageDownloader } from '@bsv/sdk/storage/StorageDownloader'
 
-interface DownloadFormProps {}
+interface DownloadFormProps { }
 
 const DownloadForm: React.FC<DownloadFormProps> = () => {
   const [downloadURL, setDownloadURL] = useState<string>('')

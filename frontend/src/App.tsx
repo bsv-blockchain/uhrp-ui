@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { Container, Typography, Tabs, Tab, Grid } from '@mui/material'
 import { ToastContainer } from 'react-toastify'
 import useAsyncEffect from 'use-async-effect'
-import checkForMetaNetClient from './utils/checkForMetaNetClient'
-import NoMncModal from './components/NoMncModal/NoMncModal'
-import DownloadForm from './components/DownloadForm'
-import UploadForm from './components/UploadForm'
-import Footer from './components/Footer'
+import checkForMetaNetClient from './utils/checkForMetaNetClient.js'
+import NoMncModal from './components/NoMncModal/NoMncModal.js'
+import DownloadForm from './components/DownloadForm.js'
+import UploadForm from './components/UploadForm.js'
+import Footer from './components/Footer.js'
 
 import './App.scss'
 
@@ -21,6 +21,7 @@ const App: React.FC = () => {
       if (hasMNC === 0) {
         setIsMncMissing(true) // Open modal if MNC is not found
       } else {
+        clearInterval(intervalId)
         setIsMncMissing(false) // Ensure modal is closed if MNC is found
       }
     }, 1000)
@@ -38,7 +39,6 @@ const App: React.FC = () => {
     <Container maxWidth='sm' sx={{ paddingTop: '2em' }}>
       <NoMncModal open={isMncMissing} onClose={() => setIsMncMissing(false)} />
       <Grid container spacing={2}>
-        <ToastContainer />
         <Grid item xs={12}>
           <Typography variant='h4' align='center'>
             UHRP Storage UI

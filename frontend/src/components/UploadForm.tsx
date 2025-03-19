@@ -9,7 +9,6 @@ import {
   Typography,
   FormControl,
   InputLabel,
-  SelectChangeEvent,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -17,10 +16,11 @@ import {
 } from '@mui/material'
 import { CloudUpload } from '@mui/icons-material'
 import { toast } from 'react-toastify'
-import constants from '../utils/constants'
-import { StorageUploader, WalletClient } from '@bsv/sdk'
+import constants from '../utils/constants.js'
+import WalletClient from '@bsv/sdk/wallet/WalletClient'
+import { StorageUploader } from '@bsv/sdk/storage/StorageUploader'
 
-interface UploadFormProps {}
+interface UploadFormProps { }
 
 const UploadForm: React.FC<UploadFormProps> = () => {
   const [storageURL, setStorageURL] = useState<string>('')
@@ -116,7 +116,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
     }
   }
 
-  const handleSelectChange = (event: SelectChangeEvent<string>) => {
+  const handleSelectChange = (event: any) => {
     const selectedValue = event.target.value
     if (selectedValue === 'add-new-option') {
       setOpenDialog(true)
