@@ -24,6 +24,28 @@
   "background_color": "#ffffff",
   "babbage": {
     "groupPermissions": {
+      "protocolPermissions": [
+        {
+          "protocolID": [2, "server hmac"],
+          "counterparty": "self",
+          "description": "for deriving keys related to hmac"
+        },
+        {
+          "protocolID": [1, "identity key retrieval"],
+          "counterparty": "self",
+          "description": "for fetching user identities"
+        },
+        {
+          "protocolID": [2, "auth message signature"],
+          "counterparty": "anyone",
+          "description": "for signing messages"
+        },
+        {
+          "protocolID": [2, "3241645161d8"],
+          "counterparty": "anyone",
+          "description": "for identifying users"
+        }
+      ],
       "spendingAuthorization": {
         "amount": 600000,
         "duration": 3888000,
