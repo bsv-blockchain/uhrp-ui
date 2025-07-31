@@ -8,7 +8,7 @@ import DownloadForm from './components/DownloadForm.js'
 import UploadForm from './components/UploadForm.js'
 import FilesForm from './components/FilesForm.js'
 import Footer from './components/Footer.js'
-
+import {WalletClient} from '@bsv/sdk'
 import './App.scss'
 
 const App: React.FC = () => {
@@ -24,6 +24,8 @@ const App: React.FC = () => {
       } else {
         clearInterval(intervalId)
         setIsMncMissing(false) // Ensure modal is closed if MNC is found
+        const walletclient = await new WalletClient;
+        await walletclient.waitForAuthentication();
       }
     }, 1000)
 

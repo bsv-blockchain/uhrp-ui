@@ -23,10 +23,34 @@
   "theme_color": "#000000",
   "background_color": "#ffffff",
   "babbage": {
-    "spendingAuthorization": {
-      "description": "Upload files for preservation or backup on the UHRP content storage network.",
-      "duration": "3888000",
-      "amount": "600000"
+    "groupPermissions": {
+      "protocolPermissions": [
+        {
+          "protocolID": [2, "server hmac"],
+          "counterparty": "self",
+          "description": "for deriving keys related to hmac"
+        },
+        {
+          "protocolID": [1, "identity key retrieval"],
+          "counterparty": "self",
+          "description": "for fetching user identities"
+        },
+        {
+          "protocolID": [2, "auth message signature"],
+          "counterparty": "anyone",
+          "description": "for signing messages"
+        },
+        {
+          "protocolID": [2, "3241645161d8"],
+          "counterparty": "anyone",
+          "description": "for identifying users"
+        }
+      ],
+      "spendingAuthorization": {
+        "amount": 600000,
+        "duration": 3888000,
+        "description": "Upload files for preservation or backup on the UHRP content storage network."
+      }
     }
   }
 }
