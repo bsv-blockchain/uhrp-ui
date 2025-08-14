@@ -2,35 +2,35 @@ import React, { useState } from 'react'
 import { Container, Typography, Tabs, Tab, Grid } from '@mui/material'
 import { ToastContainer } from 'react-toastify'
 import useAsyncEffect from 'use-async-effect'
-import checkForMetaNetClient from './utils/checkForMetaNetClient.js'
-import NoMncModal from './components/NoMncModal/NoMncModal.js'
 import DownloadForm from './components/DownloadForm.js'
 import UploadForm from './components/UploadForm.js'
 import FilesForm from './components/FilesForm.js'
 import Footer from './components/Footer.js'
-
+import { checkForMetaNetClient, NoMncModal } from 'metanet-react-prompt'
+import { WalletClient } from '@bsv/sdk'
 import './App.scss'
 
 const App: React.FC = () => {
   const [tabIndex, setTabIndex] = useState<number>(0)
-  const [isMncMissing, setIsMncMissing] = useState<boolean>(false)
+  const [MNCmissing, setMNCMissing] = useState<boolean>(false)
 
-  // Run a 1s interval for checking if MNC is running
   useAsyncEffect(async () => {
     const intervalId = setInterval(async () => {
       const hasMNC = await checkForMetaNetClient()
       if (hasMNC === 0) {
-        setIsMncMissing(true) // Open modal if MNC is not found
+        setMNCMissing(true)
       } else {
+        const walletclient = await new WalletClient()
+        await walletclient.waitForAuthentication()
         clearInterval(intervalId)
-        setIsMncMissing(false) // Ensure modal is closed if MNC is found
+        setMNCMissing(false)
       }
     }, 1000)
-
     return () => {
       clearInterval(intervalId)
     }
   }, [])
+
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue)
@@ -38,7 +38,7 @@ const App: React.FC = () => {
 
   return (
     <Container maxWidth='md' sx={{ paddingTop: '2em', paddingBottom: '2em' }}>
-      <NoMncModal open={isMncMissing} onClose={() => setIsMncMissing(false)} />
+      <NoMncModal appName={'Uhrp UI'} open={MNCmissing} onClose={() => setMNCMissing(false)} />
       <Grid container spacing={2}>
         <Grid item xs={12} sx={{ mb: 2 }}>
           <Typography variant='h4' align='center' sx={{ fontWeight: 'bold', mb: 1 }}>
