@@ -3,7 +3,8 @@ interface Constants {
   storageURLs: string[]
 }
 
-// Local, Staging, and Production URLs for your storage
+// Local, staging, and production storage URLs. The public production and
+// staging endpoints are Babbage-hosted defaults, not protocol requirements.
 const storageProdURL = 'https://nanostore.babbage.systems'
 const storageStagingURL = 'https://staging-nanostore.babbage.systems'
 const storageLocalURL = 'http://localhost:3104'
