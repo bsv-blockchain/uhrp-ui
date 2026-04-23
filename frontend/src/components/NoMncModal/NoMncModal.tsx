@@ -29,13 +29,12 @@ const NoMncModal: React.FC<NoMncModalProps> = ({ open, onClose }) => {
     >
       <Box sx={style} className='focusBorderNone'>
         <Typography id='modal-modal-title' variant='h6' component='h2'>
-          UHRP Storage requires the MetaNet Client
+          UHRP Storage requires a BRC-100 wallet
         </Typography>
         <Typography id='modal-modal-description' sx={{ mt: 2 }}>
-          If you don't have it yet, it can be downloaded on{' '}
-          {/* TODO maybe change links after refactor*/}
+          If you don't have one yet, install the BSV Desktop reference wallet for{' '}
           <a
-            href='https://projectbabbage.com/desktop/res/MetaNet%20Client.exe'
+            href='https://github.com/bsv-blockchain/bsv-desktop/releases'
             target='_blank'
             rel='noopener noreferrer'
           >
@@ -43,7 +42,7 @@ const NoMncModal: React.FC<NoMncModalProps> = ({ open, onClose }) => {
           </a>
           ,{' '}
           <a
-            href='https://projectbabbage.com/desktop/res/MetaNet%20Client.dmg'
+            href='https://github.com/bsv-blockchain/bsv-desktop/releases'
             target='_blank'
             rel='noopener noreferrer'
           >
@@ -51,7 +50,7 @@ const NoMncModal: React.FC<NoMncModalProps> = ({ open, onClose }) => {
           </a>
           , or{' '}
           <a
-            href='https://projectbabbage.com/desktop/res/MetaNet%20Client.AppImage'
+            href='https://github.com/bsv-blockchain/bsv-desktop/releases'
             target='_blank'
             rel='noopener noreferrer'
           >

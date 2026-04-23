@@ -7,10 +7,10 @@ const Footer: React.FC = () => {
       <br />
       <br />
       <Typography align='center' paragraph>
-        Check out the <a href='https://projectbabbage.com/docs/nanostore/concepts/uhrp'>Universal Hash Resolution Protocol</a>! {/* TODO Change after refactor  d*/} 
+        Check out the <a href='https://github.com/bsv-blockchain/uhrp-services'>Universal Hash Resolution Protocol</a>!
       </Typography>
       <Typography align='center'>
-        <a href='https://projectbabbage.com'>www.ProjectBabbage.com</a>
+        <a href='https://github.com/bsv-blockchain/uhrp-ui'>BSV UHRP UI</a>
       </Typography>
     </>
   )
