@@ -1,6 +1,40 @@
-# BSV Project
+# UHRP Storage UI
 
-Standard BSV project structure.
+Upload, list, renew and download UHRP content. Public downloads do not require
+a wallet; upload, file listing and renewal connect to a BRC-100 wallet only when
+requested. Mainnet and TerraTestNet downloads use the corresponding SDK network
+presets. Production and staging upload providers are separate.
+
+The storage wallet adapter copies the validated `Uint8Array` AtomicBEEF returned
+by SDK 2.8.8’s binary wallet transport into the regular byte array required by
+its BRC-105 payment client. It preserves SDK transaction validation, binding,
+and all bytes; it does not reinterpret arbitrary objects or alter signatures.
+
+The Evans Creek deployment is the frontend-only CARS project
+`9b5ab73180b8edc0a9ac4394a3365ac6`, served at
+<https://uhrp-ui.bapp.dev>. The older NanoStore UI is deprecated;
+`nanostore-ui.babbage.systems` redirects to this UI through the operator-owned
+Gateway API routes. NanoStore's GCP API and buckets remain separate.
+
+Before releasing, run `npm ci`, then in `frontend` run `npm ci`,
+`npm run typecheck`, `npm test`, and `npm audit`. `npm run build` at the project
+root builds the CARS artifact. CI repeats verification on Node 22 and Node 24.
+Releases currently use the existing operator wallet through `cars release now 1`
+from a committed source checkout; no broad operator key is stored in this
+public repository. Validate the served bundle and browser download/upload/file
+listing flows after a release. Hosting and DNS operational evidence lives in
+the Network Ops dossier.
+
+Before an Evans Creek release, run Network Ops
+`scripts/ops/preflight-uhrp-ui-release.sh`. It requires both the generated-host
+and custom-domain certificates to be Ready and checks both serving URLs. For an
+older CARS deployment, pre-issue the custom certificate using Network Ops
+`config/envoy-gateway/uhrp-ui-cars-certificates.yaml`, keeping the existing
+certificate and its SANs intact until the replacement is ready. CARS may select
+the `-frontend-custom-tls` secret while processing a release; starting issuance
+at that point can interrupt HTTPS. Preserve a failed route-probe latch and stop
+the release client immediately; an already accepted server deployment can
+continue and must be observed separately.
 
 Helpful Links:
 

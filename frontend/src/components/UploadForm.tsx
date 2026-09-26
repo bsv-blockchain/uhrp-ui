@@ -1,3 +1,4 @@
+import StorageWalletClient from '../utils/StorageWalletClient'
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import {
   Button,
@@ -17,13 +18,12 @@ import {
 import { CloudUpload } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 import constants from '../utils/constants.js'
-import WalletClient from '@bsv/sdk/wallet/WalletClient'
-import { StorageUploader } from '@bsv/sdk/storage/StorageUploader'
+import { StorageUploader } from '@bsv/sdk'
 
 interface UploadFormProps { }
 
 const UploadForm: React.FC<UploadFormProps> = () => {
-  const [storageURL, setStorageURL] = useState<string>('')
+  const [storageURL, setStorageURL] = useState<string>(constants.storageURL)
   const [storageURLs, setStorageURLs] = useState<string[]>(constants.storageURLs.map(x => x.toString()))
   const [hostingMinutes, setHostingMinutes] = useState<number>(180) // Default: 3 Hours (180 minutes)
   const [loading, setLoading] = useState<boolean>(false)
@@ -41,12 +41,6 @@ const UploadForm: React.FC<UploadFormProps> = () => {
   }, [storageURL])
 
   useEffect(() => {
-    if (constants.storageURLs && constants.storageURLs.length > 0) {
-      setStorageURL(constants.storageURLs[0].toString())
-    }
-  }, [])
-
-  useEffect(() => {
     setIsFormValid(
       storageURL.trim() !== '' && hostingMinutes >= 15 && file !== null
     )
@@ -57,7 +51,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
     setLoading(true)
     setActionTXID('')
     try {
-      const wallet = new WalletClient('auto', 'localhost')
+      const wallet = new StorageWalletClient()
       const storageUploader = new StorageUploader({
         storageURL,
         wallet
@@ -172,7 +166,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
               label='Duration'
               variant='outlined'
               value={hostingMinutes}
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => setHostingMinutes(Number(e.target.value))}
+              onChange={(e) => setHostingMinutes(Number(e.target.value))}
             >
               <MenuItem value={15}>15min</MenuItem>
               <MenuItem value={180}>3 Hours</MenuItem>
@@ -302,22 +296,8 @@ const UploadForm: React.FC<UploadFormProps> = () => {
               {results.uhrpURL}
             </Typography>
 
-            <Typography variant='body2' sx={{ mb: 1 }}>
-              <b>Legacy HTTPS URL (only for this node and commitment, may expire):</b>
-            </Typography>
-            <Typography
-              variant='body1'
-              sx={{
-                p: 1.5,
-                bgcolor: 'background.paper',
-                borderRadius: 1,
-                wordBreak: 'break-all',
-                fontFamily: 'monospace'
-              }}
-            >
-              <a href={results.uhrpURL} target='_blank' rel='noopener noreferrer'>
-                {results.uhrpURL}
-              </a>
+            <Typography variant='body2'>
+              Use the UHRP identifier above in the Download tab.
             </Typography>
           </Grid>
         )}

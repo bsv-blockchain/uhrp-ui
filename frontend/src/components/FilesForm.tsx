@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import StorageWalletClient from '../utils/StorageWalletClient'
+import React, { useState } from 'react'
 import {
   Button,
   Grid,
@@ -29,7 +30,8 @@ import {
   Chip,
   Stack,
   Alert,
-  Fade
+  Fade,
+  SelectChangeEvent
 } from '@mui/material'
 import {
   Refresh as RefreshIcon,
@@ -43,9 +45,7 @@ import {
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 import constants from '../utils/constants.js'
-import WalletClient from '@bsv/sdk/wallet/WalletClient'
-import { StorageUploader } from '@bsv/sdk/storage/StorageUploader'
-import { StorageDownloader } from '@bsv/sdk/storage/StorageDownloader'
+import { StorageUploader, StorageDownloader } from '@bsv/sdk'
 
 // Define interfaces based on the types provided in your description
 interface FindFileData {
@@ -105,7 +105,7 @@ const getShortFileName = (uhrpUrl: string): string => {
 }
 
 const FilesForm: React.FC<FilesFormProps> = () => {
-  const [storageURL, setStorageURL] = useState<string>('')
+  const [storageURL, setStorageURL] = useState<string>(constants.storageURL)
   const [storageURLs, setStorageURLs] = useState<string[]>(constants.storageURLs.map(x => x.toString()))
   const [files, setFiles] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -122,17 +122,11 @@ const FilesForm: React.FC<FilesFormProps> = () => {
   const [error, setError] = useState<string>('')
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({}) // Track loading state per file
 
-  useEffect(() => {
-    if (constants.storageURLs && constants.storageURLs.length > 0) {
-      setStorageURL(constants.storageURLs[0].toString())
-    }
-  }, [])
-
   const loadFiles = async () => {
     setLoading(true)
     setError('')
     try {
-      const wallet = new WalletClient('auto', 'localhost')
+      const wallet = new StorageWalletClient()
       // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
       const storageUploader = new StorageUploader({
         storageURL,
@@ -145,14 +139,14 @@ const FilesForm: React.FC<FilesFormProps> = () => {
       setFiles(filesList || [])
     } catch (err) {
       console.error('Error loading files:', err)
-      setError('Failed to load files. Please ensure your wallet is connected.')
+      setError(err instanceof Error ? `Failed to load files: ${err.message}` : 'Failed to load files.')
       toast.error('Failed to load files')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleSelectChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleSelectChange = (event: SelectChangeEvent<string>) => {
     const selectedValue = event.target.value as string
     if (selectedValue === 'add-new-option') {
       setOpenNewOptionDialog(true)
@@ -196,7 +190,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
   const handleRenewFile = async () => {
     setLoading(true)
     try {
-      const wallet = new WalletClient('auto', 'localhost')
+      const wallet = new StorageWalletClient()
       // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
       const storageUploader = new StorageUploader({
         storageURL,
@@ -232,7 +226,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
     setLoading(true)
     setFileDetails(null)
     try {
-      const wallet = new WalletClient('auto', 'localhost')
+      const wallet = new StorageWalletClient()
       // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
       const storageUploader = new StorageUploader({
         storageURL,
@@ -508,7 +502,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
               label="Additional Duration"
               variant="outlined"
               value={additionalMinutes}
-              onChange={(e: React.ChangeEvent<{ value: unknown }>) => setAdditionalMinutes(Number(e.target.value))}
+              onChange={(e) => setAdditionalMinutes(Number(e.target.value))}
             >
               <MenuItem value={180}>3 Hours</MenuItem>
               <MenuItem value={1440}>1 Day</MenuItem>

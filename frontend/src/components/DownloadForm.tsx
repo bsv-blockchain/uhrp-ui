@@ -12,11 +12,11 @@ import {
 } from '@mui/material'
 import { CloudDownload } from '@mui/icons-material'
 import { toast } from 'react-toastify'
-import { StorageDownloader } from '@bsv/sdk/storage/StorageDownloader'
+import { StorageDownloader } from '@bsv/sdk'
 
 interface DownloadFormProps { }
 
-type NetworkType = 'mainnet' | 'testnet' | 'local';
+type NetworkType = 'mainnet' | 'teratestnet' | 'local';
 
 const DownloadForm: React.FC<DownloadFormProps> = () => {
   const [downloadURL, setDownloadURL] = useState<string>('')
@@ -96,13 +96,13 @@ const DownloadForm: React.FC<DownloadFormProps> = () => {
               labelId='network-select-label'
               value={network}
               label='Network'
-              onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+              onChange={(event) => {
                 const value = event.target.value as string;
                 setNetwork(value as NetworkType);
               }}
             >
               <MenuItem value='mainnet'>Mainnet</MenuItem>
-              <MenuItem value='testnet'>Testnet</MenuItem>
+              <MenuItem value='teratestnet'>TerraTestNet</MenuItem>
               <MenuItem value='local'>Local</MenuItem>
             </Select>
           </FormControl>

@@ -1,35 +1,13 @@
 import React, { useState } from 'react'
 import { Container, Typography, Tabs, Tab, Grid } from '@mui/material'
-import useAsyncEffect from 'use-async-effect'
 import DownloadForm from './components/DownloadForm.js'
 import UploadForm from './components/UploadForm.js'
 import FilesForm from './components/FilesForm.js'
 import Footer from './components/Footer.js'
-import { checkForMetaNetClient, NoMncModal } from 'metanet-react-prompt'
-import { WalletClient } from '@bsv/sdk'
 import './App.scss'
 
 const App: React.FC = () => {
   const [tabIndex, setTabIndex] = useState<number>(0)
-  const [MNCmissing, setMNCMissing] = useState<boolean>(false)
-
-  useAsyncEffect(async () => {
-    const intervalId = setInterval(async () => {
-      const hasMNC = await checkForMetaNetClient()
-      if (hasMNC === 0) {
-        setMNCMissing(true)
-      } else {
-        const walletclient = await new WalletClient()
-        await walletclient.waitForAuthentication()
-        clearInterval(intervalId)
-        setMNCMissing(false)
-      }
-    }, 1000)
-    return () => {
-      clearInterval(intervalId)
-    }
-  }, [])
-
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabIndex(newValue)
@@ -37,7 +15,6 @@ const App: React.FC = () => {
 
   return (
     <Container maxWidth='md' sx={{ paddingTop: '2em', paddingBottom: '2em' }}>
-      <NoMncModal appName={'Uhrp UI'} open={MNCmissing} onClose={() => setMNCMissing(false)} />
       <Grid container spacing={2}>
         <Grid item xs={12} sx={{ mb: 2 }}>
           <Typography variant='h4' align='center' sx={{ fontWeight: 'bold', mb: 1 }}>
