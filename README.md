@@ -20,6 +20,17 @@ public repository. Validate the served bundle and browser download/upload/file
 listing flows after a release. Hosting and DNS operational evidence lives in
 the Network Ops dossier.
 
+Before an Evans Creek release, run Network Ops
+`scripts/ops/preflight-uhrp-ui-release.sh`. It requires both the generated-host
+and custom-domain certificates to be Ready and checks both serving URLs. For an
+older CARS deployment, pre-issue the custom certificate using Network Ops
+`config/envoy-gateway/uhrp-ui-cars-certificates.yaml`, keeping the existing
+certificate and its SANs intact until the replacement is ready. CARS may select
+the `-frontend-custom-tls` secret while processing a release; starting issuance
+at that point can interrupt HTTPS. Preserve a failed route-probe latch and stop
+the release client immediately; an already accepted server deployment can
+continue and must be observed separately.
+
 Helpful Links:
 
 - [LARS (for local development)](https://github.com/bitcoin-sv/lars)
