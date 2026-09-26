@@ -1,6 +1,24 @@
-# BSV Project
+# UHRP Storage UI
 
-Standard BSV project structure.
+Upload, list, renew and download UHRP content. Public downloads do not require
+a wallet; upload, file listing and renewal connect to a BRC-100 wallet only when
+requested. Mainnet and TerraTestNet downloads use the corresponding SDK network
+presets. Production and staging upload providers are separate.
+
+The Evans Creek deployment is the frontend-only CARS project
+`9b5ab73180b8edc0a9ac4394a3365ac6`, served at
+<https://uhrp-ui.bapp.dev>. The older NanoStore UI is deprecated;
+`nanostore-ui.babbage.systems` redirects to this UI through the operator-owned
+Gateway API routes. NanoStore's GCP API and buckets remain separate.
+
+Before releasing, run `npm ci`, then in `frontend` run `npm ci`,
+`npm run typecheck`, `npm test`, and `npm audit`. `npm run build` at the project
+root builds the CARS artifact. CI repeats verification on Node 22 and Node 24.
+Releases currently use the existing operator wallet through `cars release now 1`
+from a committed source checkout; no broad operator key is stored in this
+public repository. Validate the served bundle and browser download/upload/file
+listing flows after a release. Hosting and DNS operational evidence lives in
+the Network Ops dossier.
 
 Helpful Links:
 
