@@ -1,6 +1,6 @@
 {
   "name": "uhrp-example-ui",
-  "version": "0.2.46",
+  "version": "0.2.47",
   "private": true,
   "license": "Open BSV License",
   "dependencies": {

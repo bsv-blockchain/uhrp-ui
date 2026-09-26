@@ -89,3 +89,5 @@ The one constant is `deployment-info.json`.
 [Open BSV License](./LICENSE.txt)
 
 Signed uploads normalize case-insensitive header names before delegating to the SDK public HTTPS transport, so the server-required content type replaces the file MIME hint without changing certificate, destination, or redirect checks. File management reads bounded pages and offers **Load More Files**, including an explicit provider-recovery notice for unsigned legacy records.
+
+Files downloads default to the selected bundled provider’s network. **Download Network** lets users choose the network for custom providers, matching the public Download tab.
