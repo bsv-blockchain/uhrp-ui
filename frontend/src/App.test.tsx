@@ -3,13 +3,13 @@ import React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
-const wallet = vi.hoisted(() => ({ created: vi.fn(), listUploads: vi.fn() }))
+const wallet = vi.hoisted(() => ({ created: vi.fn(), listUploads: vi.fn(), downloader: vi.fn(), download: vi.fn() }))
 vi.mock('@bsv/sdk', async importOriginal => ({
   ...await importOriginal<typeof import('@bsv/sdk')>(),
   WalletClient: class { constructor(...args: unknown[]) { wallet.created(...args) } },
   AuthFetch: class { fetch = wallet.listUploads },
   StorageUploader: class {},
-  StorageDownloader: class {}
+  StorageDownloader: class { constructor(options: unknown) { wallet.downloader(options) } download = wallet.download }
 }))
 vi.mock('./utils/constants.js', () => ({ default: {
   storageURL: 'https://staging-nanostore.babbage.systems',
@@ -18,9 +18,13 @@ vi.mock('./utils/constants.js', () => ({ default: {
 
 import App from './App'
 
-afterEach(cleanup)
+afterEach(() => { cleanup(); vi.restoreAllMocks() })
 beforeEach(() => {
   vi.clearAllMocks()
+  wallet.download.mockResolvedValue({ mimeType: 'text/plain', data: [1, 2, 3] })
+  URL.createObjectURL = vi.fn(() => 'blob:synthetic')
+  URL.revokeObjectURL = vi.fn()
+  vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
   wallet.listUploads.mockImplementation(async () => new Response(JSON.stringify({ status: 'success', uploads: [] })))
 })
 
@@ -39,6 +43,22 @@ describe('public UI and wallet actions', () => {
     expect(screen.getByText('https://staging-nanostore.babbage.systems')).toBeTruthy()
     expect(wallet.created).not.toHaveBeenCalled()
     expect((screen.getByRole('button', { name: 'Upload' }) as HTMLButtonElement).disabled).toBe(true)
+  })
+
+  it('downloads staging files on TerraTestNet and honors a custom network selection', async () => {
+    const uhrpUrl = 'XUTZmjjtRiRWs15RZFLyZtLe5wRfbWNELLCXKVT3dg2inSz8AJKM'
+    wallet.listUploads.mockResolvedValue(new Response(JSON.stringify({ status: 'success', uploads: [{ uhrpUrl, expiryTime: 1_900_000_000 }] })))
+    render(<App />)
+    fireEvent.click(screen.getByRole('tab', { name: 'Files' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Load My Files' }))
+    const download = await screen.findByRole('button', { name: 'Download' })
+    fireEvent.click(download)
+    await waitFor(() => expect(wallet.download).toHaveBeenCalledWith(uhrpUrl))
+    expect(wallet.downloader).toHaveBeenLastCalledWith({ networkPreset: 'teratestnet' })
+    fireEvent.mouseDown(screen.getByRole('combobox', { name: 'Download Network' }))
+    fireEvent.click(await screen.findByRole('option', { name: 'Mainnet' }))
+    fireEvent.click(download)
+    await waitFor(() => expect(wallet.downloader).toHaveBeenLastCalledWith({ networkPreset: 'mainnet' }))
   })
 
   it('continues a file listing past unsigned legacy rows', async () => {

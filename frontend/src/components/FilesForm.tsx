@@ -1,3 +1,4 @@
+import { storageNetwork, type StorageNetwork } from '../utils/storageNetwork'
 import { listUploadsPage, type StoredUpload } from '../utils/listUploadsPage'
 import StorageWalletClient from '../utils/StorageWalletClient'
 import React, { useState } from 'react'
@@ -107,6 +108,7 @@ const getShortFileName = (uhrpUrl: string): string => {
 
 const FilesForm: React.FC<FilesFormProps> = () => {
   const [storageURL, setStorageURL] = useState<string>(constants.storageURL)
+  const [network, setNetwork] = useState<StorageNetwork>(storageNetwork(constants.storageURL))
   const [storageURLs, setStorageURLs] = useState<string[]>(constants.storageURLs.map(x => x.toString()))
   const [files, setFiles] = useState<StoredUpload[]>([])
   const [nextOffset, setNextOffset] = useState<number | undefined>()
@@ -156,6 +158,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
       setOpenNewOptionDialog(true)
     } else {
       setStorageURL(selectedValue)
+      setNetwork(storageNetwork(selectedValue))
       setFiles([])
       setNextOffset(undefined)
       setLegacyPending(0)
@@ -170,6 +173,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
     if (newOption.trim() !== '' && !storageURLs.includes(newOption)) {
       setStorageURLs([...storageURLs, newOption])
       setStorageURL(newOption)
+      setNetwork(storageNetwork(newOption))
       setNewOption('')
     }
     setOpenNewOptionDialog(false)
@@ -256,8 +260,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
     setDownloadingFiles(prev => ({ ...prev, [uhrpUrl]: true }))
 
     try {
-      // Create the StorageDownloader with mainnet as default
-      const storageDownloader = new StorageDownloader({ networkPreset: 'mainnet' })
+      const storageDownloader = new StorageDownloader({ networkPreset: network })
 
       // Attempt to download the file
       const { mimeType, data } = await storageDownloader.download(uhrpUrl.trim())
@@ -327,6 +330,16 @@ const FilesForm: React.FC<FilesFormProps> = () => {
               </Select>
             </FormControl>
           </Box>
+
+          <FormControl fullWidth sx={{ mb: 2 }}>
+            <InputLabel id="files-download-network-label">Download Network</InputLabel>
+            <Select labelId="files-download-network-label" label="Download Network" value={network}
+              onChange={event => setNetwork(event.target.value as StorageNetwork)}>
+              <MenuItem value="mainnet">Mainnet</MenuItem>
+              <MenuItem value="teratestnet">TerraTestNet</MenuItem>
+              <MenuItem value="local">Local</MenuItem>
+            </Select>
+          </FormControl>
 
           <Divider sx={{ my: 2 }} />
 
