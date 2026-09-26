@@ -1,3 +1,4 @@
+import StorageWalletClient from '../utils/StorageWalletClient'
 import React, { useState } from 'react'
 import {
   Button,
@@ -44,7 +45,7 @@ import {
 } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 import constants from '../utils/constants.js'
-import { WalletClient, StorageUploader, StorageDownloader } from '@bsv/sdk'
+import { StorageUploader, StorageDownloader } from '@bsv/sdk'
 
 // Define interfaces based on the types provided in your description
 interface FindFileData {
@@ -125,7 +126,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
     setLoading(true)
     setError('')
     try {
-      const wallet = new WalletClient()
+      const wallet = new StorageWalletClient()
       // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
       const storageUploader = new StorageUploader({
         storageURL,
@@ -138,7 +139,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
       setFiles(filesList || [])
     } catch (err) {
       console.error('Error loading files:', err)
-      setError('Failed to load files. Please ensure your wallet is connected.')
+      setError(err instanceof Error ? `Failed to load files: ${err.message}` : 'Failed to load files.')
       toast.error('Failed to load files')
     } finally {
       setLoading(false)
@@ -189,7 +190,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
   const handleRenewFile = async () => {
     setLoading(true)
     try {
-      const wallet = new WalletClient()
+      const wallet = new StorageWalletClient()
       // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
       const storageUploader = new StorageUploader({
         storageURL,
@@ -225,7 +226,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
     setLoading(true)
     setFileDetails(null)
     try {
-      const wallet = new WalletClient()
+      const wallet = new StorageWalletClient()
       // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
       const storageUploader = new StorageUploader({
         storageURL,

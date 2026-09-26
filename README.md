@@ -5,6 +5,11 @@ a wallet; upload, file listing and renewal connect to a BRC-100 wallet only when
 requested. Mainnet and TerraTestNet downloads use the corresponding SDK network
 presets. Production and staging upload providers are separate.
 
+The storage wallet adapter copies the validated `Uint8Array` AtomicBEEF returned
+by SDK 2.8.8’s binary wallet transport into the regular byte array required by
+its BRC-105 payment client. It preserves SDK transaction validation, binding,
+and all bytes; it does not reinterpret arbitrary objects or alter signatures.
+
 The Evans Creek deployment is the frontend-only CARS project
 `9b5ab73180b8edc0a9ac4394a3365ac6`, served at
 <https://uhrp-ui.bapp.dev>. The older NanoStore UI is deprecated;

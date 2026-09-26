@@ -1,3 +1,4 @@
+import StorageWalletClient from '../utils/StorageWalletClient'
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import {
   Button,
@@ -17,7 +18,7 @@ import {
 import { CloudUpload } from '@mui/icons-material'
 import { toast } from 'react-toastify'
 import constants from '../utils/constants.js'
-import { WalletClient, StorageUploader } from '@bsv/sdk'
+import { StorageUploader } from '@bsv/sdk'
 
 interface UploadFormProps { }
 
@@ -50,7 +51,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
     setLoading(true)
     setActionTXID('')
     try {
-      const wallet = new WalletClient()
+      const wallet = new StorageWalletClient()
       const storageUploader = new StorageUploader({
         storageURL,
         wallet
