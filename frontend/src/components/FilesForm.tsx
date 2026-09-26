@@ -1,3 +1,4 @@
+import { listUploadsPage, type StoredUpload } from '../utils/listUploadsPage'
 import StorageWalletClient from '../utils/StorageWalletClient'
 import React, { useState } from 'react'
 import {
@@ -107,7 +108,9 @@ const getShortFileName = (uhrpUrl: string): string => {
 const FilesForm: React.FC<FilesFormProps> = () => {
   const [storageURL, setStorageURL] = useState<string>(constants.storageURL)
   const [storageURLs, setStorageURLs] = useState<string[]>(constants.storageURLs.map(x => x.toString()))
-  const [files, setFiles] = useState<any[]>([])
+  const [files, setFiles] = useState<StoredUpload[]>([])
+  const [nextOffset, setNextOffset] = useState<number | undefined>()
+  const [legacyPending, setLegacyPending] = useState(0)
   const [loading, setLoading] = useState<boolean>(false)
   const [openRenewDialog, setOpenRenewDialog] = useState<boolean>(false)
   const [openFindDialog, setOpenFindDialog] = useState<boolean>(false)
@@ -122,21 +125,22 @@ const FilesForm: React.FC<FilesFormProps> = () => {
   const [error, setError] = useState<string>('')
   const [downloadingFiles, setDownloadingFiles] = useState<Record<string, boolean>>({}) // Track loading state per file
 
-  const loadFiles = async () => {
+  const loadFiles = async (append = false) => {
     setLoading(true)
     setError('')
     try {
       const wallet = new StorageWalletClient()
-      // @ts-ignore - Using the new methods that exist at runtime but not in TypeScript definitions
-      const storageUploader = new StorageUploader({
-        storageURL,
-        wallet
+      const page = await listUploadsPage(storageURL, wallet, append ? nextOffset : 0)
+      setFiles(previous => {
+        const merged = new Map<string, StoredUpload>()
+        for (const item of [...(append ? previous : []), ...page.uploads]) {
+          const old = merged.get(item.uhrpUrl)
+          if (!old || item.expiryTime > old.expiryTime) merged.set(item.uhrpUrl, item)
+        }
+        return Array.from(merged.values())
       })
-
-      // @ts-ignore - Using the new StorageUploader.listUploads() method
-      const filesList = await storageUploader.listUploads()
-      console.log('list', filesList)
-      setFiles(filesList || [])
+      setNextOffset(page.nextOffset)
+      setLegacyPending(previous => (append ? previous : 0) + page.legacyAdvertisementsPending)
     } catch (err) {
       console.error('Error loading files:', err)
       setError(err instanceof Error ? `Failed to load files: ${err.message}` : 'Failed to load files.')
@@ -152,6 +156,9 @@ const FilesForm: React.FC<FilesFormProps> = () => {
       setOpenNewOptionDialog(true)
     } else {
       setStorageURL(selectedValue)
+      setFiles([])
+      setNextOffset(undefined)
+      setLegacyPending(0)
     }
   }
 
@@ -327,7 +334,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={loadFiles}
+              onClick={() => loadFiles()}
               disabled={loading}
               startIcon={<RefreshIcon />}
               sx={{ borderRadius: 2, px: 3 }}
@@ -346,6 +353,16 @@ const FilesForm: React.FC<FilesFormProps> = () => {
             </Button>
           </Stack>
 
+          {nextOffset !== undefined && (
+            <Button onClick={() => loadFiles(true)} disabled={loading} sx={{ mb: 2 }}>
+              Load More Files
+            </Button>
+          )}
+          {legacyPending > 0 && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Some older records need recovery by this storage provider. Verified files remain available.
+            </Alert>
+          )}
           {error && (
             <Fade in={!!error}>
               <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>

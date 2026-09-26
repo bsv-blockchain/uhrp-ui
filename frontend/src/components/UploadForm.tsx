@@ -1,3 +1,4 @@
+import { createStorageUploadTransport } from '../utils/StorageUploadTransport'
 import StorageWalletClient from '../utils/StorageWalletClient'
 import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import {
@@ -54,7 +55,8 @@ const UploadForm: React.FC<UploadFormProps> = () => {
       const wallet = new StorageWalletClient()
       const storageUploader = new StorageUploader({
         storageURL,
-        wallet
+        wallet,
+        fetchClient: createStorageUploadTransport()
       })
 
       if (!file) {
