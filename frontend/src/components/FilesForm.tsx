@@ -373,7 +373,7 @@ const FilesForm: React.FC<FilesFormProps> = () => {
           )}
           {legacyPending > 0 && (
             <Alert severity="info" sx={{ mb: 2 }}>
-              Some older records need recovery by this storage provider. Verified files remain available.
+              Some records lack verified ownership and are not shown. Verified files remain available.
             </Alert>
           )}
           {error && (
