@@ -67,7 +67,7 @@ describe('public UI and wallet actions', () => {
     fireEvent.click(screen.getByRole('tab', { name: 'Files' }))
     fireEvent.click(screen.getByRole('button', { name: 'Load My Files' }))
     const more = await screen.findByRole('button', { name: 'Load More Files' })
-    expect(screen.getByText(/Some older records need recovery/)).toBeTruthy()
+    expect(screen.getByText(/Some records lack verified ownership/)).toBeTruthy()
     fireEvent.click(more)
     await waitFor(() => expect(wallet.listUploads).toHaveBeenCalledTimes(2))
     expect(wallet.listUploads).toHaveBeenLastCalledWith('https://staging-nanostore.babbage.systems/list?limit=200&offset=200', { method: 'GET' })
