@@ -86,7 +86,7 @@ The one constant is `deployment-info.json`.
 
 ## License
 
-[Open BSV License](./LICENSE.txt)
+[Apache License 2.0](LICENSE)
 
 Signed uploads normalize case-insensitive header names before delegating to the SDK public HTTPS transport, so the server-required content type replaces the file MIME hint without changing certificate, destination, or redirect checks. File management reads bounded pages and offers **Load More Files**, including an explicit provider-recovery notice for unsigned legacy records.
 
